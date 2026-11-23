@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decision Experiments · Managerial Psychology</title>
+<style>
+  :root { --sage:#4F7342; --sage-l:#E8F0E3; --line:#A1C393; --ink:#282520; --mid:#666; --red:#B03A2E; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Arial, "Microsoft JhengHei", sans-serif; color:var(--ink); background:#fafaf8; line-height:1.5; }
+  main { max-width: 640px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 1.35rem; margin: 0 0 2px; }
+  .sub { color: var(--mid); font-size: .9rem; margin: 0 0 16px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px; margin:14px 0; }
+  .card h2 { font-size:1.05rem; margin:0 0 8px; color:var(--sage); }
+  .zh { color: var(--mid); font-size: .88rem; }
+  label { display:block; margin:6px 0; }
+  input[type=text], input[type=number], textarea { width:100%; padding:10px; font-size:1rem; border:1px solid #bbb; border-radius:6px; font-family:inherit; }
+  textarea { min-height: 60px; }
+  .opt { display:flex; gap:10px; align-items:flex-start; padding:10px; border:1px solid #ddd; border-radius:8px; margin:8px 0; cursor:pointer; }
+  .opt input { margin-top:4px; }
+  button { background:var(--sage); color:#fff; border:0; border-radius:8px; padding:11px 18px; font-size:1rem; cursor:pointer; margin-top:8px; }
+  button:disabled { background:#aaa; cursor:default; }
+  .msg { margin-top:8px; font-size:.92rem; }
+  .err { color: var(--red); }
+  .ok { color: var(--sage); font-weight:bold; }
+  .locked { opacity:.55; }
+  .locked .body { display:none; }
+  .wait { color:var(--mid); font-style:italic; }
+  .hidden { display:none; }
+  .rules li { margin: 3px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Decision Experiments</h1>
+  <p class="sub">Managerial Psychology · Week 11 · 決策小實驗</p>
+
+  <!-- Login -->
+  <section id="login" class="card">
+    <h2>Sign in 登入</h2>
+    <label>Student ID 學號<input id="sid" type="text" autocomplete="off"></label>
+    <label>Name 姓名<input id="sname" type="text" autocomplete="off"></label>
+    <button id="loginBtn">Start 開始</button>
+    <div id="loginMsg" class="msg"></div>
+  </section>
+
+  <!-- Experiments -->
+  <section id="app" class="hidden">
+    <div class="card">
+      <h2>Hi, <span id="who"></span></h2>
+      <ul class="rules">
+        <li>Work alone. No talking, no Googling. <span class="zh">獨立作答，不討論、不查資料。</span></li>
+        <li>Each experiment opens when your teacher says "Go." <span class="zh">老師說開始才會開放下一題。</span></li>
+        <li>Go with your first answer. You can submit each answer only once. <span class="zh">憑直覺作答，每題只能送出一次。</span></li>
+      </ul>
+    </div>
+
+    <div class="card exp" data-q="1">
+      <h2>Experiment 1 · How Many Stores?</h2>
+      <p class="wait">Please wait for your teacher. 請等老師說開始。</p>
+      <div class="body">
+        <p><b>Q1. Are there more or fewer than <span id="anchor"></span> 7-ELEVEN stores in Taiwan?</b></p>
+        <label class="opt"><input type="radio" name="q1mf" value="More"> More 多</label>
+        <label class="opt"><input type="radio" name="q1mf" value="Fewer"> Fewer 少</label>
+        <label><b>Q2. My best guess (number of stores):</b><input id="q1guess" type="number" min="0" inputmode="numeric"></label>
+        <button>Submit 送出</button><div class="msg"></div>
+      </div>
+    </div>
+
+    <div class="card exp" data-q="2">
+      <h2>Experiment 2 · Who Is Linda?</h2>
+      <p class="wait">Please wait for your teacher. 請等老師說開始。</p>
+      <div class="body">
+        <p>Linda is 31 years old, single, outspoken, and very bright. She majored in philosophy. As a student, she was deeply concerned with issues of discrimination and social justice, and also participated in anti-nuclear demonstrations.</p>
+        <p><b>Which is more probable?</b></p>
+        <label class="opt"><input type="radio" name="q2" value="a"> (a) Linda is a bank teller. <span class="zh">Linda 是銀行櫃員。</span></label>
+        <label class="opt"><input type="radio" name="q2" value="b"> (b) Linda is a bank teller and is active in the feminist movement. <span class="zh">Linda 是銀行櫃員，而且積極參與女權運動。</span></label>
+        <button>Submit 送出</button><div class="msg"></div>
+      </div>
+    </div>
+
+    <div class="card exp" data-q="3">
+      <h2>Experiment 3 · Save the Jobs</h2>
+      <p class="wait">Please wait for your teacher. 請等老師說開始。</p>
+      <div class="body">
+        <p>Your company is in serious trouble. If nothing is done, 600 employees will lose their jobs. Management has two plans. You are the decision-maker: choose one.</p>
+        <div id="plans"></div>
+        <label><b>My reason (one sentence):</b><textarea id="q3reason" maxlength="300"></textarea></label>
+        <button>Submit 送出</button><div class="msg"></div>
+      </div>
+    </div>
+
+    <div class="card exp" data-q="4">
+      <h2>Experiment 4 · Flip a Coin</h2>
+      <p class="wait">Please wait for your teacher. 請等老師說開始。</p>
+      <div class="body">
+        <p>Imagine this is real money. We flip a fair coin once.<br>
+        <b>Tails:</b> you lose NT$100. &nbsp; <b>Heads:</b> you win NT$ X.</p>
+        <label><b>What is the smallest X that makes you willing to play? (NT$)</b><input id="q4" type="number" min="0" inputmode="numeric"></label>
+        <button>Submit 送出</button><div class="msg"></div>
+      </div>
+    </div>
+
+    <div class="card exp" data-q="5">
+      <h2>Reflection · My Own Decision</h2>
+      <p class="wait">This opens at the end of class. 課程最後開放。</p>
+      <div class="body">
+        <p>Think of one decision you made recently: a part-time job, a group project, something you bought.</p>
+        <label><b>The decision:</b><textarea id="r1" maxlength="300"></textarea></label>
+        <label><b>The bias at work:</b><input id="r2" type="text" maxlength="100"></label>
+        <label><b>A tool that could help:</b><input id="r3" type="text" maxlength="100"></label>
+        <button>Submit 送出</button><div class="msg"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+// ===== Paste your Apps Script web app URL here =====
+const API_URL = "https://script.google.com/macros/s/AKfycbxDeSDNyWO46IRBJwR3IcNCXsVjf0BIeGP2yrJVZ3ZgwXiZ7XA7MRicXkvuWyOYsFuF/exec";
+// ===================================================
+
+const ERRORS = {
+  not_in_roster: "Student ID and name don't match the class list. Please check and try again. 學號或姓名與名單不符，請再確認。",
+  not_open_yet: "This experiment isn't open yet. Please wait for your teacher. 這題還沒開放。",
+  already_answered: "You already submitted this answer. 這題已經送出過了。",
+  invalid: "Please complete all the answers first. 請先完成作答。",
+  login_first: "Please sign in again. 請重新登入。"
+};
+
+let me = null;          // {id, name, form}
+let done = {};          // question -> true
+let stage = 0;
+let pollTimer = null;
+
+async function api(body) {
+  // text/plain avoids a CORS preflight, which Apps Script does not answer.
+  const res = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
+  return res.json();
+}
+
+function $(sel, root) { return (root || document).querySelector(sel); }
+function errText(e) { return ERRORS[e] || "Something went wrong. Please try again. 發生錯誤，請再試一次。"; }
+
+function renderForm() {
+  $("#anchor").textContent = me.form === "A" ? "1,000" : "20,000";
+  const plans = me.form === "A"
+    ? [["A", "If Plan A is chosen, 200 jobs will be saved."],
+       ["B", "If Plan B is chosen, there is a 1/3 chance that all 600 jobs will be saved, and a 2/3 chance that no jobs will be saved."]]
+    : [["C", "If Plan C is chosen, 400 employees will lose their jobs."],
+       ["D", "If Plan D is chosen, there is a 1/3 chance that nobody will lose their job, and a 2/3 chance that all 600 employees will lose their jobs."]];
+  $("#plans").innerHTML = plans.map(p =>
+    `<label class="opt"><input type="radio" name="q3" value="${p[0]}"> <span><b>Plan ${p[0]}:</b> ${p[1]}</span></label>`).join("");
+}
+
+function renderStage() {
+  document.querySelectorAll(".exp").forEach(card => {
+    const q = Number(card.dataset.q);
+    const open = q <= stage;
+    card.classList.toggle("locked", !open && !done[q]);
+    $(".wait", card).classList.toggle("hidden", open || done[q]);
+    if (done[q]) markDone(card);
+  });
+}
+
+function markDone(card) {
+  card.classList.remove("locked");
+  $(".wait", card).classList.add("hidden");
+  card.querySelectorAll("input, textarea, button").forEach(el => el.disabled = true);
+  const m = $(".msg", card); m.className = "msg ok"; m.textContent = "Submitted ✓ 已送出";
+}
+
+function collect(q) {
+  const val = n => { const el = document.querySelector(`input[name="${n}"]:checked`); return el ? el.value : ""; };
+  if (q === 1) return { moreFewer: val("q1mf"), guess: $("#q1guess").value };
+  if (q === 2) return { choice: val("q2") };
+  if (q === 3) return { plan: val("q3"), reason: $("#q3reason").value };
+  if (q === 4) return { minWin: $("#q4").value };
+  return { decision: $("#r1").value, bias: $("#r2").value, tool: $("#r3").value };
+}
+
+function complete(q, a) {
+  if (q === 1) return a.moreFewer && a.guess !== "";
+  if (q === 2) return !!a.choice;
+  if (q === 3) return !!a.plan;
+  if (q === 4) return a.minWin !== "";
+  return a.decision.trim() !== "";
+}
+
+async function submit(card) {
+  const q = Number(card.dataset.q), btn = $("button", card), m = $(".msg", card);
+  const a = collect(q);
+  if (!complete(q, a)) { m.className = "msg err"; m.textContent = errText("invalid"); return; }
+  btn.disabled = true; m.className = "msg"; m.textContent = "Sending… 傳送中";
+  try {
+    const r = await api({ action: "answer", id: me.id, name: me.name, q, answer: a });
+    if (r.ok || r.error === "already_answered") { done[q] = true; markDone(card); }
+    else { btn.disabled = false; m.className = "msg err"; m.textContent = errText(r.error); }
+  } catch (e) {
+    btn.disabled = false; m.className = "msg err"; m.textContent = "Network problem. Please try again. 網路問題，請再試一次。";
+  }
+}
+
+async function poll() {
+  try { const r = await api({ action: "state" }); if (r.ok && r.stage !== stage) { stage = r.stage; renderStage(); } } catch (e) {}
+}
+
+async function login(id, name, quiet) {
+  const m = $("#loginMsg"), btn = $("#loginBtn");
+  if (!id || !name) { m.className = "msg err"; m.textContent = "Please enter your student ID and name. 請輸入學號與姓名。"; return; }
+  btn.disabled = true; m.className = "msg"; m.textContent = "Checking… 確認中";
+  try {
+    const r = await api({ action: "login", id, name });
+    if (!r.ok) { btn.disabled = false; m.className = "msg err"; m.textContent = errText(r.error); return; }
+    me = { id, name: r.name, form: r.form }; done = r.done || {}; stage = r.stage;
+    try { sessionStorage.setItem("dx_login", JSON.stringify({ id, name })); } catch (e) {}
+    $("#who").textContent = r.name;
+    $("#login").classList.add("hidden"); $("#app").classList.remove("hidden");
+    renderForm(); renderStage();
+    pollTimer = setInterval(poll, 8000);
+  } catch (e) {
+    btn.disabled = false; m.className = "msg err"; m.textContent = quiet ? "" : "Network problem. Please try again. 網路問題，請再試一次。";
+  }
+}
+
+$("#loginBtn").addEventListener("click", () => login($("#sid").value.trim(), $("#sname").value.trim()));
+document.querySelectorAll(".exp button").forEach(b => b.addEventListener("click", () => submit(b.closest(".exp"))));
+
+// Reconnect after a page refresh in the same tab.
+try {
+  const saved = JSON.parse(sessionStorage.getItem("dx_login") || "null");
+  if (saved) { $("#sid").value = saved.id; $("#sname").value = saved.name; login(saved.id, saved.name, true); }
+} catch (e) {}
+</script>
+</body>
+</html>
